@@ -324,14 +324,16 @@ const char* dp_typesForPropertyGetter(objc_property_t property){
     switch(attributes[1]) {
         case '@' : {
             //objects are what we really care about
-            NSMutableString *className = [NSMutableString string];
+            const char *start = &attributes[3];
             const char *next = &attributes[3];
+            NSUInteger length = 0;
             while (*next != ',' && *next != '\0' && *next != '"') {
-                [className appendFormat:@"%c", *next];
                 next++;
+                length++;
             }
+            NSString *className = [[NSString alloc] initWithBytes:start length:length encoding:NSUTF8StringEncoding];
             //NSLog(@"Property %@ is of class %@.", propertyName, className);
-            return NSClassFromString([NSString stringWithString:className]);
+            return NSClassFromString(className);
         }
         //all these can be represented as NSNumber, so return [NSNumber class]
         case 'c' :
